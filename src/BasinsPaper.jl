@@ -12,6 +12,6 @@ include("produce_basins.jl")
 include("style.jl")
 export BasinConfig, produce_basins, create_dynamical_system
 export default_diffeq, default_diffeq_nonadaptive
-export plot_2D_basins!
+export plot_2D_basins!, theme!
 
 end

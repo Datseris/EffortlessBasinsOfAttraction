@@ -27,25 +27,29 @@ for (i, u) in enumerate(u0s)
     tr = trajectory(ds, 5000.0, u; Ttr = 1000, default_diffeq...)
     lines!(ax, tr.data, linewidth = 2.0,
     transparent = false, color = COLORS[i])
-    λs = lyapunovspectrum(ds, 100000; u0 = u, Ttr = 1000, default_diffeq_nonadaptive...)
+    # λs = lyapunovspectrum(ds, 100000; u0 = u, Ttr = 1000, default_diffeq_nonadaptive...)
     scatter!(ax, tr[end]; color = COLORS[i], markersize = 5000)
-    @show λs
-    @show tr[end]
+    # @show λs
+    # @show tr[end]
     # sleep(1)
 end
 
+integ = integrator(ds, u0s[1]; default_diffeq...)
+
+
 # %% Anyways, compute basins!
-M = 80 # YOOHOOOO!! It seems that M = 80 is the critical threshold to detect all three!
+M = 120
 system = :lorenz84
-xg = range(-1, 3; length = M)
-yg = range(-2, 3; length = M)
-zg = range(-2, 2.5; length = M)
+xg = range(-3, 3; length = M)
+yg = range(-3, 3; length = M)
+zg = range(-3, 3; length = M)
 grid = (xg, yg, zg)
-basin_kwargs = NamedTuple()
+basin_kwargs = (Δt = 0.2,)
+# basin_kwargs = ()
 config = BasinConfig(; system, p, basin_kwargs, grid)
 basins, attractors = produce_basins(config; force = false)
 
-basin_fractions(basins)
+@show basin_fractions(basins)
 
 fig = Figure()
 plot_2D_basins!(fig, basins[:, :, length(zg)÷2], xg, yg; title = system)
@@ -62,12 +66,15 @@ for i in keys(attractors)
     marker = length(tr) > 10 ? :circle : :rect
     color = COLORS[i]
     scatter!(ax, columns(tr)...; markersize, marker, color)
-    j = findfirst(isequal(i), basins)
-    x = xg[j[1]]
-    y = yg[j[2]]
-    z = zg[j[3]]
+    # j = findfirst(isequal(i), basins)
+    # x = xg[j[1]]
+    # y = yg[j[2]]
+    # z = zg[j[3]]
+    x,y,z = tr[1]
     tr = trajectory(ds, 1000, SVector(x,y,z); Ttr = 1000, default_diffeq...)
     lines!(ax, columns(tr)...; linewidth = 1.0, color)
+
+    
 end
 
 # %% Comments problems:

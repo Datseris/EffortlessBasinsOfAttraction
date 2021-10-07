@@ -10,7 +10,7 @@ system = :magnetic_pendulum
 # basin_kwargs = (mx_chk_att = 1, mx_chk_fnd_att = 10,)
 config = BasinConfig(; system, p, grid)
 
-basins, attractors = produce_basins(config; force = false)
+basins, attractors = produce_basins(config; force = true)
 
 fig = Figure()
 plot_2D_basins!(fig, basins, xg, yg; attractors, title = system)

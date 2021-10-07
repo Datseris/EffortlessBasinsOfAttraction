@@ -51,25 +51,25 @@ p = @ntuple ω d α
 xg = yg = range(-3, 3; length = 300)
 grid = (xg, yg)
 system = :magnetic_pendulum
-# basin_kwargs = (mx_chk_att = 1, mx_chk_fnd_att = 10,)
+basin_kwargs = (Δt = 1,)
 config = BasinConfig(; system, p, grid)
 basins, attractors = produce_basins(config)
 push!(B, basins)
 push!(X, xg); push!(Y, yg)
 push!(A, attractors)
-push!(labels, "4D basins projected to 2D")
+push!(labels, "4D system projected to 2D")
 
 # Refining basins
 xg = range(1.80, 1.95; length = 250)
 yg = range(0, 0.12; length = 250)
 grid = (xg, yg)
-basin_kwargs = (attractors = attractors,)
+basin_kwargs = (attractors = attractors, Δt = 1, )
 config = BasinConfig(; system, p, grid, basin_kwargs)
 basins, attractors = produce_basins(config)
 push!(B, basins)
 push!(A, attractors)
 push!(X, xg); push!(Y, yg)
-push!(labels, "Refined basins (from 3)")
+push!(labels, "Refined basins (from (c))")
 
 # Poincare map of interlaced periodic
 system = :thomas_cyclical_poincare
@@ -90,15 +90,16 @@ G = 1.347
 a = 0.255
 b = 4.0
 p = @ntuple F G a b
-M = 80 # YOOHOOOO!! It seems that M = 80 is the critical threshold to detect all three!
+M = 120
 system = :lorenz84
-xg = range(-1, 3; length = M)
-yg = range(-2, 3; length = M)
-zg = range(-2, 2.5; length = M)
+xg = range(-3, 3; length = M)
+yg = range(-3, 3; length = M)
+zg = range(-3, 3; length = M)
 grid = (xg, yg, zg)
-basin_kwargs = NamedTuple()
+basin_kwargs = (Δt = 0.2,)
 config = BasinConfig(; system, p, basin_kwargs, grid)
-basins, attractors = produce_basins(config)
+basins, attractors = produce_basins(config; force = false)
+
 push!(B, basins[:, :, length(zg)÷2])
 push!(A, attractors)
 push!(X, xg); push!(Y, yg)
@@ -140,18 +141,21 @@ push!(labels, "High-dim. continuous chaotic")
 
 # %% Make the figure
 import CairoMakie
-Used = GLMakie
+Used = CairoMakie
 Used.activate!()
-fig = Figure(resolution= (900, 1150))
+theme!()
+fig = Figure(resolution= (900, 1150), fontsize = 16)
 noatt = [6, 7, 8]
 
 for i in 1:length(B)
     @show i 
     @show length(A[i])
-    plot_2D_basins!(fig, B[i], X[i], Y[i]; title = "$(i): "*labels[i], 
+    plot_2D_basins!(fig, B[i], X[i], Y[i]; title = "($(('a':'z')[i])) "*labels[i], 
         attractors = i ∈ noatt ? nothing : A[i],
         i = (i-1)÷2 + 1, j = isodd(i) ? 1 : 2, add_colorbar = false,
     )
 end
+rowgap!(fig.layout, 10)
+colgap!(fig.layout, 10)
 
-# CairoMakie.save(plotsdir("all_basins.png"), fig; px_per_unit = 4)
+# Used.save(plotsdir("all_basins.png"), fig; px_per_unit = 4)

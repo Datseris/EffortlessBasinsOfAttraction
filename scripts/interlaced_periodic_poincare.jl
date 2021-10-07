@@ -1,15 +1,19 @@
 using DrWatson
 @quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
 
-
 system = :thomas_cyclical
 b = 0.1665
 p = @ntuple b
 
-xg = yg = zg = range(-6.0, 6.0; length = 251)
+xg = yg = zg = range(-6.0, 6.0; length = 100)
 grid = (xg, yg, zg)
-config = BasinConfig(; system, p, grid)
-basins, attractors = produce_basins(config; force = false)
+
+basin_kwargs = (mx_chk_hit_bas = 40, mx_chk_att = 5, mx_chk_loc_att = 120, Δt = 1.0)
+
+config = BasinConfig(; system, p, grid, basin_kwargs)
+basins, attractors = produce_basins(config; force = true)
+
+@show basin_fractions(basins)
 
 fig = Figure()
 plot_2D_basins!(fig, basins[:, :, length(zg)÷2], xg, yg; title = system)

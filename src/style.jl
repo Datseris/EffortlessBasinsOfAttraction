@@ -48,7 +48,9 @@ function plot_2D_basins!(fig, basins, xg, yg;
 end
 
 # other styling elements for Makie
-set_theme!(;
-    palette = (color = COLORS,), 
-    fontsize = 30
-)
+function theme!()
+    set_theme!(;
+        palette = (color = COLORS,), 
+        fontsize = 26,
+    )
+end
