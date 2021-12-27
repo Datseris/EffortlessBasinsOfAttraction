@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
+@quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
 α = 0.2; ω = 1.0; d = 0.3
 

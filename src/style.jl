@@ -3,9 +3,9 @@ using GLMakie
 
 function generate_cmap(n)
     if n > length(COLORS)
-        return cgrad(COLORS[1:4], n; categorical = false)
+        return :viridis
     else
-        return cgrad(COLORS[1:min(length(COLORS), n)], n; categorical = true)
+        return cgrad(COLORS[1:n], n; categorical = true)
     end
 end
 
@@ -15,9 +15,16 @@ function plot_2D_basins!(fig, basins, xg, yg;
     )
 
     title = replace(string(title), '_' => ' ')
-    zeroi = findall(isequal(-1), basins)
-    basins[zeroi] .= 0
+    basins = replace!(basins, -1 => 0)
     ids = sort!(unique(basins))
+    # Modification in case attractor labels are not sequential:
+    for i in 2:length(ids)
+        if ids[i] - ids[i-1] ≠ 1
+            replace!(basins, ids[i] => ids[i-1]+1)
+            replace!(ids, ids[i] => ids[i-1]+1)
+        end
+    end
+
     cmap = generate_cmap(length(ids))
     ax = Axis(fig[i,j]; title, titlealign)
     

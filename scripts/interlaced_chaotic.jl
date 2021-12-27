@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
+@quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
 # Okay, these four parameters have: fixed point, periodic trajectory, 
 # and chaotic attractor. Fixed point has very small basin.

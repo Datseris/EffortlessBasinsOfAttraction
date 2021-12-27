@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
+@quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
 system = :coupled_logistic_maps
 D = 4

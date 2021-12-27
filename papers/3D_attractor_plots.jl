@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
+@quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
 theme!()
 fig = Figure(resolution= (800, 350)); display(fig)

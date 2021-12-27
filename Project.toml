@@ -1,10 +1,9 @@
-name = "BasinsPaper"
+name = "EffortlessBasinsOfAttraction"
 authors = ["George Datseris", "Alexandre Wagemakers"]
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-ChaosTools = "608a59af-f2a3-5ad4-90b4-758bdf3122a7"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 DynamicalSystems = "61744808-ddfa-5f27-97ff-6e42cc95d634"
 DynamicalSystemsBase = "6e36e845-645a-534a-86f2-f5d4aa5a06b4"
@@ -15,5 +14,5 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
 DrWatson = "2.1.0"
-DynamicalSystemsBase = "2.1.2"
+DynamicalSystemsBase = "2.3.4"
 julia = "1.6.0"

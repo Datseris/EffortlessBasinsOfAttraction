@@ -1,4 +1,4 @@
-module BasinsPaper
+module EffortlessBasinsOfAttraction
 # This module is defined to use DrWatson's `@quickactivate` macro with Symbol input.
 # It will bring into scope everything exported here, as well as activate the 
 # project file in the same folder.

@@ -1,15 +1,15 @@
 using DrWatson
 @quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
-a, b = 1.4, 0.3
-p = @ntuple a b
-system = :henon
+res = 1000
+xg = range(-2, 2; length = res)
+yg = range(0, 2;  length = res)
 
-basin_kwargs = (horizon_limit=100.0, mx_chk_fnd_att=30, mx_chk_lost=2)
-basin_kwargs = NamedTuple()
-Z = 201
-xg = range(-1.5, 1.5; length = Z)
-yg = range(-0.5, 0.5; length = Z)
+ω = 3.5
+p = @ntuple ω
+system = :riddled_basins
+
+basin_kwargs = (horizon_limit=10.0, T = 2π/ω)
 grid = (xg, yg)
 config = BasinConfig(; system, p, basin_kwargs, grid)
 

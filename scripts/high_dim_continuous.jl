@@ -1,61 +1,15 @@
 using DrWatson
-@quickactivate :BasinsPaper # exports DynamicalSystems, GLMakie and other goodies in `src`
-
-system = :lorenz96
-F = 8.0
-D = 6
-p = @ntuple D F
-xg = yg = zg = range(-12.0, 12.0; length = 50)
-grid = (xg, yg, zg)
-basin_kwargs = ()
-config = BasinConfig(; system, p, basin_kwargs, grid)
-basins, attractors = produce_basins(config; force = true)
-
-
-
-# Can use Thomas cyclical to make some really cool animations
-# for JuliaDynamics youtube
-
-# I believe that for b=0.2 we have coexistence of 
-# chaotic attractor and periodic orbit attractor...?
-# Lyapunov spectrum is positive but when plotting 
-# in 3D the orbit closes. WTF...
-
-# For F = 4 we have periodic, for F = 6 quasiperiodic or 
-# extremely high periodicity and for F = 8 chaos.
-
-# %% Testing
-F = 8.0
-D = 6
-ds = Systems.lorenz96(D; F)
-u0s = [rand(D) for i in 1:3]
-u0s[1] = [rand(3)..., 0, 0, 0]
-
-fig = Figure(); display(fig)
-ax = Axis3(fig[1,1])
-for (i, u) in enumerate(u0s)
-    tr = trajectory(ds, 1000.0, u; Ttr = 1000)
-    lines!(ax, tr[:, 1:3].data, linewidth = 1.0,
-    transparent = false)
-end
-
-# TODO: Can also be used for beautiful illustrations
-
-
-# projection...
+@quickactivate :EffortlessBasinsOfAttraction # exports DynamicalSystems, GLMakie and other goodies in `src`
 
 
 # %% Lorenz96 coupled with Ice-Albedo feedback
-# From Maximilian Gelbrecht 1,2,a , Valerio Lucarini 3,4 , Niklas Boers 1,5,6 , and Jürgen
-# Kurths 1,2,7
-using DynamicalSystems, GLMakie
-
+# From Maximilian Gelbrecht et al.
 function lorenz96_ebm_gelbrecht(dx, x, p, t)
     N = length(x) - 1 # number of grid points of Lorenz 96
     T = x[end]
     a₀ = 0.5
     a₁ = 0.4
-    S = 16
+    S = 8.0
     F = 8.0
     Tbar = 270.0
     ΔT = 60.0
@@ -90,14 +44,54 @@ function paper_projection(tr)
     return M, 𝓔, T
 end
 
-Ts = 250:0.5:300
-N = 32
+Ts = 240:0.5:300
+N = 5
 fig = Figure(); display(fig)
 ax = Axis3(fig[1,1]; ylabel = "M", xlabel = "𝓔", zlabel = "T")
 ds = ContinuousDynamicalSystem(lorenz96_ebm_gelbrecht, rand(N+1), nothing)
 for T0 in (220.0, 300.0)
     u0 = [4rand(N)..., T0]
-    tr = trajectory(ds, 10000.0, u0)
+    tr = trajectory(ds, 20000.0, u0; Δt = 0.05)
     M, 𝓔, T = paper_projection(tr)
-    lines!(ax, 𝓔, M, T)
+    lines!(ax, 𝓔, M, T; transparent = true)
+end
+
+# %% Basins
+# For these parameters it seems that the low temperature attractor is limit cycle
+# and the upper temperature is chaotic (or extremely long period)
+p = (D = 5,)
+system = :lorenz96_ebm_gelbrecht
+xgs = [range(-8, 15; length = 10) for i in 1:p.D]
+Tg = range(230, 300; length = 101)
+grid = (xgs..., Tg)
+
+@show prod(length.(grid))
+basin_kwargs = (Δt = 0.5,)
+config = BasinConfig(; system, p, basin_kwargs, grid)
+basins, attractors = produce_basins(config; force = true)
+
+@show basin_fractions(basins)
+
+fig = Figure()
+plot_2D_basins!(fig, basins[1,1,1,1, :, :], xgs[end], Tg; title = system)
+
+
+# %% Plot found trajectories
+fig = Figure(); display(fig)
+ax = Axis3(fig[1,1])
+for i in keys(attractors)
+    tr = attractors[i]
+    markersize = length(tr) > 2 ? 2000 : 6000
+    marker = length(tr) > 2 ? :circle : :rect
+    color = COLORS[i]
+
+    idxs = [1,4,6]
+    x,y,z = columns(tr)[idxs]
+    scatter!(ax, x,y,z; markersize, marker, color)
+    tr = trajectory(ds, 5000, tr[1]; Ttr = 1000, default_diffeq...)
+    x,y,z = columns(tr)[idxs]
+    lines!(ax, x,y,z; linewidth = 1.0, color)
+    
+    ls = lyapunovspectrum(ds, 40000, 2; Ttr = 1000, u0 = tr[1])
+    @show ls
 end
