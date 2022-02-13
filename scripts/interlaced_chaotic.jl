@@ -54,9 +54,6 @@ basins, attractors = produce_basins(config; force = false)
 fig = Figure()
 plot_2D_basins!(fig, basins[:, :, length(zg)÷2], xg, yg; title = system)
 
-# %% Make animation of found basins
-# TODO.
-
 # %% Plot found trajectories
 fig = Figure(); display(fig)
 ax = Axis3(fig[1,1])
@@ -73,13 +70,4 @@ for i in keys(attractors)
     x,y,z = tr[1]
     tr = trajectory(ds, 1000, SVector(x,y,z); Ttr = 1000, default_diffeq...)
     lines!(ax, columns(tr)...; linewidth = 1.0, color)
-
-    
 end
-
-# %% Comments problems:
-# It seems that we have difficulties with our algorithm and chaotic attractors...
-# It took me a bit of effort to find all three. Furthermore, it seems that 
-# increasing M from 80 to just 85 brings problems and the algorithm doesn't hault
-# it computes for a lot of time but it doesn't seem to make progress......
-# (at least, the progress bar does not progress.)
